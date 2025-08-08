@@ -1,7 +1,6 @@
 package com.example.reservation.facade;
 
 import com.example.reservation.dto.*;
-import com.example.reservation.entity.Reservation;
 import com.example.reservation.service.BookService;
 import com.example.reservation.service.MemberService;/*
 import com.example.reservation.service.NotificationService;*//*
@@ -9,14 +8,9 @@ import com.example.reservation.service.ReservationService;*/
 import com.example.reservation.service.NotificationService;
 import com.example.reservation.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.reactive.function.BodyInserters;
 import reactor.core.publisher.Mono;
-
-import java.util.Optional;
 
 @Service
 public class ReservationFacade {
@@ -48,8 +42,8 @@ public class ReservationFacade {
                                                        ReservationResponse.builder()
                                                                .message(notification.getMessage())
                                                                .build()
-                                               ))
-                               );
+                                               )));
                    });
+
     }
 }
