@@ -14,7 +14,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public Mono<NotificationResponse> sendNotification(Book book, Member member) {
-        WebClient notificationClient = WebClient.create("http://localhost:8085/notification-service");
+        WebClient notificationClient = WebClient.create("http://notification-service:8085/notification-service");
         NotificationRequest notification = NotificationRequest.builder()
                 .email(member.getEmail())
                 .title(book.getTitle())
