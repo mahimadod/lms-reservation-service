@@ -7,7 +7,6 @@ import com.example.reservation.dto.ReservationResponse;
 import com.example.reservation.entity.Reservation;
 import com.example.reservation.facade.ReservationFacade;/*
 import com.example.reservation.service.ReservationService;*/
-import com.example.reservation.service.AuthService;
 import com.example.reservation.service.AuthServiceImpl;
 import com.example.reservation.service.MemberService;
 import com.example.reservation.service.ReservationService;
@@ -36,11 +35,9 @@ public class ReservationController {
     @Autowired
     private AuthServiceImpl authService;
 
-    @Autowired
-    private AuthService authServiceImpl;
     @PostMapping
-    public Mono<AuthResponse> createReservation(@RequestBody ReservationRequest reservationRequest) throws Exception {
-        return authService.getAuthResponseMono();
+    public Mono<ResponseEntity<ReservationResponse>> createReservation( @RequestBody ReservationRequest reservationRequest) throws Exception {
+        return reservationFacade.createReservation(reservationRequest);
     }
 
     @DeleteMapping("/{id}")
