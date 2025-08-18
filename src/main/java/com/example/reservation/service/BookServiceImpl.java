@@ -16,7 +16,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Mono<Book> getBookByIdMono(Long bookId) {
-        WebClient bookClient = WebClient.create("http://book-service:8085/book-service");
+        WebClient bookClient = WebClient.create("http://spring-cloud-gateway-service:8085/book-service");
 
         return authService.getAuthResponseMono()
                 .flatMap(authResponse ->

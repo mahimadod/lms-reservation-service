@@ -2,11 +2,13 @@ package com.example.reservation.service;
 
 
 import com.example.reservation.dto.Member;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Service
 public class MemberServiceImpl implements MemberService {
 
@@ -15,8 +17,8 @@ public class MemberServiceImpl implements MemberService {
     AuthServiceImpl authService;
     @Override
     public Mono<Member> getMemberByIdMono(Long memberId) {
-
-        WebClient memberClient = WebClient.create("http://localhost:8085/member-service");
+        log.info("***********1***********");
+        WebClient memberClient = WebClient.create("http://spring-cloud-gateway-service:8085/member-service");
         return authService.getAuthResponseMono().flatMap(authResponse ->
                         memberClient.get()
                                 .uri("/api/member/{memberId}", memberId)
@@ -25,6 +27,7 @@ public class MemberServiceImpl implements MemberService {
                                 .bodyToMono(Member.class)
                 ).flatMap(i->{
                     System.out.println(i);
+            log.info("COMING OUT MEMBER SERVICE");
                  return Mono.just(i);
                 });
 

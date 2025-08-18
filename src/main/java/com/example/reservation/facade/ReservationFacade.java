@@ -7,11 +7,13 @@ import com.example.reservation.service.NotificationService;*//*
 import com.example.reservation.service.ReservationService;*/
 import com.example.reservation.service.NotificationService;
 import com.example.reservation.service.ReservationService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Service
 public class ReservationFacade {
 
@@ -28,9 +30,12 @@ public class ReservationFacade {
     private NotificationService notificationService;
 
    public Mono<ResponseEntity<ReservationResponse>> createReservation(ReservationRequest reservationRequest) throws Exception {
-            Mono<Member> member=memberService.getMemberByIdMono(reservationRequest.getMemberId());
-            Mono<Book> book=bookService.getBookByIdMono(reservationRequest.getBookId());
-            return Mono.zip(member, book)
+       log.info("GOIN INSIDE MEMBER SERVICE");
+       Mono<Member> member=memberService.getMemberByIdMono(reservationRequest.getMemberId());
+       log.info("GOIN INSIDE BOOK SERVICE");
+       Mono<Book> book=bookService.getBookByIdMono(reservationRequest.getBookId());
+       log.info("COMING OUT MEMBER SERVICE");
+       return Mono.zip(member, book)
                    .flatMap(tuple -> {
                        Member memberResp = tuple.getT1();
                        Book bookResp = tuple.getT2();
