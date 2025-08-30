@@ -19,7 +19,7 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 @RestController
-@RequestMapping("/reservation-service/api/reservations")
+@RequestMapping("/api/reservations")
 @CrossOrigin
 public class ReservationController {
 

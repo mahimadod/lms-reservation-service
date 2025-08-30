@@ -18,7 +18,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Mono<Member> getMemberByIdMono(Long memberId) {
         log.info("***********1***********");
-        WebClient memberClient = WebClient.create("http://spring-cloud-gateway-service:8085/member-service");
+        WebClient memberClient = WebClient.create("lb://member-service");
         return authService.getAuthResponseMono().flatMap(authResponse ->
                         memberClient.get()
                                 .uri("/api/member/{memberId}", memberId)

@@ -16,7 +16,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public Mono<NotificationResponse> sendNotification(Book book, Member member) {
-        WebClient notificationClient = WebClient.create("http://spring-cloud-gateway-service:8085/notification-service");
+        WebClient notificationClient = WebClient.create("lb://notification-service/api/notify");
         NotificationRequest notification = NotificationRequest.builder()
                 .email(member.getEmail())
                 .title(book.getTitle())
