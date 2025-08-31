@@ -18,6 +18,11 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private ReactiveRedisTemplate<String, AuthResponse> redisTemplate;
 
+    private final WebClient.Builder webClientBuilder;
+
+    public AuthServiceImpl(WebClient.Builder webClientBuilder) {
+        this.webClientBuilder = webClientBuilder;
+    }
 
     public Mono<AuthResponse> getAuthResponseMono() {
         String cacheKey = "auth:token";
@@ -25,9 +30,9 @@ public class AuthServiceImpl implements AuthService {
         return redisTemplate.opsForValue().get(cacheKey)
                 .doOnNext(val -> System.out.println("✅ CACHE HIT: " + val))
                 .switchIfEmpty(
-                        WebClient.create("lb://authenticator-service/auth-service")
+                        webClientBuilder.build()
                                 .post()
-                                .uri("/login")
+                                .uri("lb://authenticator-service/auth-service/login")
                                 .bodyValue(AuthRequest.builder().username("admin").password("adminpass").build())
                                 .retrieve()
                                 .bodyToMono(AuthResponse.class)
