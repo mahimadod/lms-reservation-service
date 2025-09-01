@@ -29,9 +29,9 @@ public class NotificationServiceImpl implements NotificationService {
                 .build();
 
         return authService.getAuthResponseMono().flatMap(authResponse ->
-                webClientBuilder.build()
+                webClientBuilder.baseUrl("lb://spring-cloud-gateway-service/").build()
                         .post()
-                        .uri("lb://spring-cloud-gateway-service/notification-service/api/notify")
+                        .uri("notification-service/api/notify")
                         .header("token", authResponse.getToken())
                         .body(BodyInserters.fromValue(notification))
                         .exchangeToMono(response -> {
