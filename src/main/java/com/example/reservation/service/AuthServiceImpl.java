@@ -32,7 +32,7 @@ public class AuthServiceImpl implements AuthService {
                 .switchIfEmpty(
                         webClientBuilder.build()
                                 .post()
-                                .uri("lb://spring-cloud-gateway-service/auth-service/login")
+                                .uri("lb://spring-cloud-gateway-service/authenticator-service/auth-service/login")
                                 .bodyValue(AuthRequest.builder().username("admin").password("adminpass").build())
                                 .retrieve()
                                 .bodyToMono(AuthResponse.class)
