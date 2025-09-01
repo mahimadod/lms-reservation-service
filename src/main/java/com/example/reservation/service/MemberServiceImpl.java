@@ -12,16 +12,21 @@ import reactor.core.publisher.Mono;
 @Service
 public class MemberServiceImpl implements MemberService {
 
+    private final WebClient.Builder webClientBuilder;
 
     @Autowired
     AuthServiceImpl authService;
+
+    public MemberServiceImpl(WebClient.Builder webClientBuilder) {
+        this.webClientBuilder = webClientBuilder;
+    }
+
     @Override
     public Mono<Member> getMemberByIdMono(Long memberId) {
         log.info("***********1***********");
-        WebClient memberClient = WebClient.create("lb://member-service");
         return authService.getAuthResponseMono().flatMap(authResponse ->
-                        memberClient.get()
-                                .uri("/api/member/{memberId}", memberId)
+                        webClientBuilder.build().get()
+                                .uri("lb://spring-cloud-gateway-service/member-service/api/member/{memberId}", memberId)
                                 .header("token", authResponse.getToken())
                                 .retrieve()
                                 .bodyToMono(Member.class)

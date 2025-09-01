@@ -14,14 +14,18 @@ public class BookServiceImpl implements BookService {
     @Autowired
     AuthServiceImpl authService;
 
+    private final WebClient.Builder webClientBuilder;
+
+    public BookServiceImpl(WebClient.Builder webClientBuilder) {
+        this.webClientBuilder = webClientBuilder;
+    }
+
     @Override
     public Mono<Book> getBookByIdMono(Long bookId) {
-        WebClient bookClient = WebClient.create("lb://book-service");
-
         return authService.getAuthResponseMono()
                 .flatMap(authResponse ->
-                        bookClient.get()
-                                .uri("/api/books/{bookId}", bookId)
+                        webClientBuilder.build().get()
+                                .uri("lb://spring-cloud-gateway-service/book-service/api/books/{bookId}", bookId)
                                 .header("token", authResponse.getToken())
                                 .retrieve()
                                 .bodyToMono(Book.class)
