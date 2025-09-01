@@ -30,9 +30,9 @@ public class AuthServiceImpl implements AuthService {
         return redisTemplate.opsForValue().get(cacheKey)
                 .doOnNext(val -> System.out.println("✅ CACHE HIT: " + val))
                 .switchIfEmpty(
-                        webClientBuilder.build()
+                        webClientBuilder.baseUrl("lb://spring-cloud-gateway-service/").build()
                                 .post()
-                                .uri("lb://spring-cloud-gateway-service/auth-service/login")
+                                .uri("auth-service/login")
                                 .bodyValue(AuthRequest.builder().username("admin").password("adminpass").build())
                                 .retrieve()
                                 .bodyToMono(AuthResponse.class)
