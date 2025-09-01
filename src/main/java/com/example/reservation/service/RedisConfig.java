@@ -17,7 +17,7 @@ public class RedisConfig {
     @Bean
     @Primary
     public ReactiveRedisConnectionFactory reactiveRedisConnectionFactory() {
-        return new LettuceConnectionFactory("redis", 6379); // customize as needed
+        return new LettuceConnectionFactory("redis-container", 6379); // customize as needed
     }
 
     @Bean
