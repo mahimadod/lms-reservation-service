@@ -24,8 +24,8 @@ public class BookServiceImpl implements BookService {
     public Mono<Book> getBookByIdMono(Long bookId) {
         return authService.getAuthResponseMono()
                 .flatMap(authResponse ->
-                        webClientBuilder.build().get()
-                                .uri("lb://spring-cloud-gateway-service/book-service/api/books/{bookId}", bookId)
+                        webClientBuilder.baseUrl("lb://spring-cloud-gateway-service/").build().get()
+                                .uri("book-service/api/books/{bookId}", bookId)
                                 .header("token", authResponse.getToken())
                                 .retrieve()
                                 .bodyToMono(Book.class)

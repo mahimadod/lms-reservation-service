@@ -25,8 +25,8 @@ public class MemberServiceImpl implements MemberService {
     public Mono<Member> getMemberByIdMono(Long memberId) {
         log.info("***********1***********");
         return authService.getAuthResponseMono().flatMap(authResponse ->
-                        webClientBuilder.build().get()
-                                .uri("lb://spring-cloud-gateway-service/member-service/api/member/{memberId}", memberId)
+                        webClientBuilder.baseUrl("lb://spring-cloud-gateway-service/").build().get()
+                                .uri("member-service/api/member/{memberId}", memberId)
                                 .header("token", authResponse.getToken())
                                 .retrieve()
                                 .bodyToMono(Member.class)
