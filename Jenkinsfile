@@ -6,6 +6,7 @@ pipeline {
         DOCKER_IMAGE = "mahimadod/lms-reservation-service"
         JAVA_HOME = tool name: 'JDK21', type: 'jdk'
         MAVEN_HOME = tool name: 'Maven3.9.9', type: 'maven'
+         SONAR_TOKEN = credentials('sonarqube-token')
     }
 
     tools {
@@ -49,6 +50,19 @@ pipeline {
                         }
                     }
                 }
+
+                stage('SonarQube Analysis') {
+                            steps {
+                                withSonarQubeEnv('SonarQube') {
+                                    bat """
+                                        mvn clean verify sonar:sonar ^
+                                            -Dsonar.projectKey=lms-reservation-service ^
+                                            -Dsonar.host.url=%SONAR_HOST_URL% ^
+                                            -Dsonar.login=%SONAR_TOKEN%
+                                    """
+                                }
+                            }
+                        }
 
         stage('Docker Build & Push') {
             steps {
