@@ -26,26 +26,29 @@ pipeline {
         }
 
         stage('Build & Test') {
-            steps {
-                withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
-                    configFileProvider([configFile(fileId: 'github-settings', variable: 'MAVEN_SETTINGS')]) {
-                        withEnv([
-                            "JAVA_HOME=${env.JAVA_HOME}",
-                            "MAVEN_HOME=${env.MAVEN_HOME}",
-                            "PATH=${env.JAVA_HOME}/bin:${env.MAVEN_HOME}/bin:$PATH"
-                        ]) {
-                            sh 'mvn clean install --settings $MAVEN_SETTINGS'
+                    steps {
+                        withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
+                            configFileProvider([configFile(fileId: 'github-settings', variable: 'MAVEN_SETTINGS')]) {
+                                withEnv([
+                                    "JAVA_HOME=${env.JAVA_HOME}",
+                                    "MAVEN_HOME=${env.MAVEN_HOME}",
+                                    "PATH=${env.JAVA_HOME}\\bin;${env.MAVEN_HOME}\\bin;%PATH%" // ✅ CHANGED FOR WINDOWS
+                                ]) {
+                                    // ❌ Old (for Unix): sh 'mvn clean install --settings $MAVEN_SETTINGS'
+                                    // ✅ NEW (for Windows):
+                                    bat 'mvn clean install --settings %MAVEN_SETTINGS%'
+                                }
+                            }
+                        }
+                    }
+                    post {
+                        always {
+                            // ✅ MAKE SURE THIS PATTERN MATCHES YOUR FILES!
+                            junit '**/target/surefire-reports/*.xml'
+                            archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
                         }
                     }
                 }
-            }
-            post {
-                always {
-                    junit '**/target/surefire-reports/*.xml'
-                    archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
-                }
-            }
-        }
 
         stage('Docker Build & Push') {
             steps {
@@ -63,8 +66,8 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying Docker container...'
-                sh """
-                    docker rm -f lms-reservation || true
+                bat """
+                    docker rm -f lms-reservation || exit 0
                     docker run -d --name lms-reservation --network lms-network -p 8084:8084 ${DOCKER_IMAGE}:${BUILD_NUMBER}
                 """
             }
